@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase Item</title>
+</head>
+<body>
+    <h2 id="login-status">Login</h2>
+
+    <div id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="buy-section" style="display: none;">
+        <h2>Buy an Item</h2>
+        <label for="itemID">Item ID:</label>
+        <input type="text" id="itemID" required>
+        <button onclick="buyItem()">Buy</button>
+        <button onclick="logout()">Log Out</button>
+        <button onclick="viewPurchases()">View Purchases</button>
+    </div>
+
+    <div id="purchases-section" style="display: none;">
+        <h2>Purchased Items</h2>
+        <button onclick="fetchPurchases()">Refresh Purchases</button>
+        <ul id="purchases-list"></ul>
+    </div>
+
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username })
+            });
+            const data = await response.json();
+            
+            if (data.status === "success") {
+                document.getElementById('login-status').innerText = `Welcome, ${username}!`;
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('buy-section').style.display = 'block';
+            } else {
+                alert(data.message);
+            }
+        }
+
+        async function buyItem() {
+            const username = document.getElementById('username').value;
+            const itemID = document.getElementById('itemID').value;
+            const timestamp = new Date().toISOString();
+
+            const response = await fetch('/buy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, itemID, timestamp })
+            });
+            const data = await response.json();
+            alert(data.message);
+        }
+
+        async function logout() {
+            const response = await fetch('/logout', {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.status === "success") {
+                document.getElementById('login-status').innerText = "Login";
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('buy-section').style.display = 'none';
+                document.getElementById('purchases-section').style.display = 'none';
+                document.getElementById('username').value = '';
+                document.getElementById('itemID').value = '';
+            } else {
+                alert(data.message);
+            }
+        }
+
+        async function viewPurchases() {
+            document.getElementById('purchases-section').style.display = 'block';
+            fetchPurchases();
+        }
+
+        async function fetchPurchases() {
+            const response = await fetch('/purchases');
+            const purchases = await response.json();
+
+            const purchasesList = document.getElementById('purchases-list');
+            purchasesList.innerHTML = ''; // Clear existing items
+
+            purchases.forEach(purchase => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Username: ${purchase.username}, Item ID: ${purchase.item_id}, Timestamp: ${purchase.timestamp}`;
+                purchasesList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
+
