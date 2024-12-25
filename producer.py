@@ -19,15 +19,19 @@ class KafkaProducerService:
         )
 
     def send_purchase(self, purchase_data):
-        # Send the purchase data asynchronously and add callback for success/error
-        future = self.producer.send(Config.KAFKA_TOPIC, key=b'buy_item', value=purchase_data)
-        
-        # Handle success or failure
-        future.add_callback(self.on_send_success)
-        future.add_errback(self.on_send_error)
+        try:
+            # Send the purchase data asynchronously and add callback for success/error
+            future = self.producer.send(Config.KAFKA_TOPIC, key=b'buy_item', value=purchase_data)
+            
+            # Handle success or failure
+            future.add_callback(self.on_send_success)
+            future.add_errback(self.on_send_error)
 
-        # Ensure all messages are sent before finishing
-        self.producer.flush()
+            # Ensure all messages are sent before finishing
+            self.producer.flush()
+        except KafkaError as e:
+            logger.error(f"Failed to send message to Kafka: {e}")
+            raise Exception("Kafka producer error occurred")
 
     def on_send_success(self, record_metadata):
         logger.info(f"Message sent to topic {record_metadata.topic} partition {record_metadata.partition} offset {record_metadata.offset}")
