@@ -1,19 +1,19 @@
 import sys
-if sys.version_info >= (3, 12, 0):
-    import six
-    sys.modules['kafka.vendor.six.moves'] = six.moves
-
+import threading
+import json
+import logging
 from flask import Flask, jsonify
 from kafka import KafkaConsumer
 from pymongo import MongoClient
 from config import Config
-import logging
-import threading
-import json 
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+if sys.version_info >= (3, 12, 0):
+    import six
+    sys.modules['kafka.vendor.six.moves'] = six.moves
 
 app = Flask(__name__)
 
@@ -33,25 +33,31 @@ class KafkaConsumerService:
         
         # Set up MongoDB client
         self.mongo_client = MongoClient(Config.MONGO_URI)
-        self.db = self.mongo_client["purchases_db"] # purchases_db is my table name
-        self.collection = self.db["purchases"] # purchases is my collection name
+        self.db = self.mongo_client["purchases_db"]
+        self.collection = self.db["purchases"]
 
     def consume_messages(self):
-        # Process each message as it's received
-        for message in self.consumer:
-            purchase_data = message.value
-            logger.info(f"Received purchase message: {purchase_data}")
-            self.collection.insert_one(purchase_data)
-    
+        try:
+            # Process each message as it's received
+            for message in self.consumer:
+                purchase_data = message.value
+                logger.info(f"Received purchase message: {purchase_data}")
+                self.collection.insert_one(purchase_data)
+        except Exception as e:
+            logger.error(f"Error while consuming messages: {e}")
+
     def fetch_purchases(self):
-        # Fetch all purchase documents from MongoDB
-        return list(self.collection.find({}, {"_id": 0}))  # Exclude ObjectId from output
+        try:
+            # Fetch all purchase documents from MongoDB
+            return list(self.collection.find({}, {"_id": 0}))  # Exclude ObjectId from output
+        except Exception as e:
+            logger.error(f"Error fetching purchases: {e}")
+            return []
 
 consumer_service = KafkaConsumerService()
 
 @app.route('/purchases', methods=['GET'])
 def get_purchases():
-    # Endpoint to get all purchases from MongoDB
     purchases = consumer_service.fetch_purchases()
     return jsonify(purchases), 200
 
@@ -65,4 +71,4 @@ if __name__ == "__main__":
     consumer_thread.start()
 
     # Run Flask app on port 6000
-    app.run(host="0.0.0.0",port=6000)
+    app.run(host="0.0.0.0", port=6000)
