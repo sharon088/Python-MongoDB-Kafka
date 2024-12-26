@@ -144,7 +144,8 @@ You can configure the chart using the values.yaml file. Below are some of the ke
         app: consumer
 
 ## Secrets Configuration
-    This Helm chart expects a Kubernetes secret for MongoDB credentials, which can be created using the following command:
+This Helm chart expects a Kubernetes secret for MongoDB credentials, which can be created using the following command:
+
 ```bash
     kubectl create secret generic mongo-credentials \
   --from-literal=MONGO_INITDB_ROOT_USERNAME=<your-username> \
