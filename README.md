@@ -40,26 +40,25 @@ This Helm chart deploys a Kafka broker, MongoDB, and a Flask consumer applicatio
 You can configure the chart using the values.yaml file. Below are some of the key configuration options:
 
 ### Kafka configuration
-    ```bash
     kafka:
-    enabled: true
-    image:
-        repository: apache/kafka
-        tag: latest
-    service:
-        name: broker
-        port: 9092
-    config:
-        KAFKA_NODE_ID: 1
-        KAFKA_PROCESS_ROLES: "broker,controller"
-        KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://localhost:9093"
-        KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://broker:9092"
-        KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
-        KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
-        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-        KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-        KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-        KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-        KAFKA_NUM_PARTITIONS: 3
-    ```
+        enabled: true
+        image:
+            repository: apache/kafka
+            tag: latest
+        service:
+            name: broker
+            port: 9092
+        config:
+            KAFKA_NODE_ID: 1
+            KAFKA_PROCESS_ROLES: "broker,controller"
+            KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://localhost:9093"
+            KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://broker:9092"
+            KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+            KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+            KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+            KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+            KAFKA_NUM_PARTITIONS: 3
+    
