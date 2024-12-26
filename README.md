@@ -147,9 +147,9 @@ You can configure the chart using the values.yaml file. Below are some of the ke
 This Helm chart expects a Kubernetes secret for MongoDB credentials, which can be created using the following command:
 
 ```bash
-    kubectl create secret generic mongo-credentials \
-  --from-literal=MONGO_INITDB_ROOT_USERNAME=<your-username> \
-  --from-literal=MONGO_INITDB_ROOT_PASSWORD=<your-password>
+kubectl create secret generic mongo-credentials \
+--from-literal=MONGO_INITDB_ROOT_USERNAME=<your-username> \
+--from-literal=MONGO_INITDB_ROOT_PASSWORD=<your-password>
 ```
 
 ## Deployment Strategy
