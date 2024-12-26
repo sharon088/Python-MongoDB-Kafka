@@ -145,17 +145,17 @@ You can configure the chart using the values.yaml file. Below are some of the ke
 
 ## Secrets Configuration
     This Helm chart expects a Kubernetes secret for MongoDB credentials, which can be created using the following command:
-    ```bash
+```bash
     kubectl create secret generic mongo-credentials \
   --from-literal=MONGO_INITDB_ROOT_USERNAME=<your-username> \
   --from-literal=MONGO_INITDB_ROOT_PASSWORD=<your-password>
-    ```
+```
 
 ## Deployment Strategy
 By default, this chart sets a replica count of 1 for the MongoDB, Kafka, and Flask consumer services. You may want to scale these services depending on your production needs.
 
 ```bash
-    replicaCount: 3
+replicaCount: 3
 ```
 Ensure the correct scaling is set for high availability and fault tolerance.
 
@@ -163,14 +163,14 @@ Ensure the correct scaling is set for high availability and fault tolerance.
 Liveness and readiness probes are configured in the values.yaml file to ensure the health of your pods. You can customize them based on your application's health check endpoint.
 
 ```bash
-    livenessProbe:
-    httpGet:
-        path: /health
-        port: 5000
-    readinessProbe:
-    httpGet:
-        path: /health
-        port: 5000
+livenessProbe:
+httpGet:
+    path: /health
+    port: 5000
+readinessProbe:
+httpGet:
+    path: /health
+    port: 5000
 ```
 
 ## Troubleshooting
